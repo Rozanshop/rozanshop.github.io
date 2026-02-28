@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rozan Collection | Fine Jewelry</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+
+<!-- PAYPAL SDK -->
+<script src="https://www.paypal.com/sdk/js?client-id=AVJTTNleMMELFLyiGkhPMh4pHe6CgwEubbFoLjaaZOSzeQTQ8Ozozqspe1riPa8DAB36P8zFXtH_9t-U&currency=USD"></script>
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Montserrat', sans-serif; background: #f9f7f4; color: #333; overflow-x: hidden; }
+header { background: white; padding: 20px 8%; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: fixed; width: 100%; top: 0; z-index: 1000; }
+.logo { display: flex; align-items: center; gap: 12px; }
+.logo img { height: 45px; }
+.logo span { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 24px; }
+.nav-left { display: flex; gap: 25px; }
+.nav-left a { text-decoration: none; color: #333; font-weight: 500; cursor: pointer; }
+.nav-left a:hover { color: #b89b5e; }
+.nav-right { font-weight: 600; cursor: pointer; }
+.hero { position: relative; height: 100vh; display: flex; justify-content: center; align-items: center; text-align: center; color: white; }
+.hero video { position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; transform: translate(-50%, -50%); object-fit: cover; z-index: -2; }
+.hero::after { content: ""; position: absolute; inset: 0; background: rgba(0,0,0,0.4); }
+.hero-content { z-index: 2; }
+.hero h1 { font-family: 'Playfair Display', serif; font-size: 48px; margin-bottom: 20px; }
+.section { padding: 140px 8% 80px; text-align: center; }
+.products { display: grid; grid-template-columns: repeat(auto-fit,minmax(250px,1fr)); gap: 30px; margin-top: 40px; }
+.product-card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); cursor: pointer; transition: .3s; }
+.product-card:hover { transform: translateY(-5px); }
+.product-card img { width: 100%; height: 250px; object-fit: cover; border-radius: 10px; }
+.cart-item { background: white; padding: 20px; margin-bottom: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; }
+.cart-item img { border-radius: 8px; width: 80px; height: 80px; object-fit: cover; }
+.total { margin-top: 10px; font-weight: 600; font-size: 18px; }
+footer { background: #111; color: #ccc; padding: 40px 8%; text-align: center; }
+.product-container { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+.product-container img, .product-container video {
+    width: 100%;
+    max-width: 400px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 10px;
+    background: #f3f3f3;
+}
+button { padding: 16px 40px; border: none; border-radius: 50px; font-size: 16px; font-weight: 600; cursor: pointer; color: white; background: red; transition: .3s; margin: 5px; }
+button:hover { opacity: 0.9; transform: translateY(-2px); }
+form input, form select, form button {
+    display: block;
+    width: 100%;
+    max-width: 400px;
+    margin: 10px auto;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+form button { background: #b89b5e; color: white; border: none; cursor: pointer; transition: 0.3s; }
+form button:hover { opacity: 0.9; }
+@media (max-width: 768px) {
+header { padding: 15px 5%; flex-direction: column; gap: 10px; }
+.logo span { font-size: 20px; }
+.nav-left { gap: 15px; font-size: 14px; flex-wrap: wrap; justify-content: center; }
+.nav-right { font-size: 14px; }
+.hero h1 { font-size: 32px; padding: 0 10px; }
+.section { padding: 120px 5% 60px; }
+.product-container img, .product-container video { max-width: 100%; }
+button { width: 100%; max-width: 300px; }
+form input, form button { width: 100%; max-width: 300px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <img src="logo.jpg" alt="Rozan Collection Logo">
+        <span>ROZAN COLLECTION</span>
+    </div>
+    <nav class="nav-left">
+        <a onclick="goHome()">Home</a>
+        <a onclick="renderCategories()">Shop</a>
+        <a onclick="goContact()">Contact</a>
+    </nav>
+    <div class="nav-right" onclick="renderCart()">Cart (<span id="cart-count">0</span>)</div>
+</header>
+
+<div id="app"></div>
+
+<footer>
+    <p>Email: Rozanshop8@gmail.com</p>
+    <p>© 2026 Rozan Collection. All Rights Reserved.</p>
+</footer>
+
+<script>
+// ==============================
+// PRODUCTS
+// ==============================
+const products = [
+    {name: "Blue Sturling Silver Basketball Necklace", price: 520, img: "images/bluebasketball.jpg", desc: "Handcrafted luxury pendant with a bold athletic edge.", category: "Basketball"},
+    {name: "#5 Red Sturling Silver Basketball Necklace", price: 1150, img: "images/redbasketball.jpg", desc: "Premium red pendant with radiant shine and elegance.", category: "Basketball"},
+    {name: "Black Sturling Silver Basketball Necklace", price: 520, img: "images/blackbasketball.jpg", desc: "Bold black finish designed for everyday luxury.", category: "Basketball"},
+    {name: "Yellow Sturling Silver Basketball Necklace", price: 520, img: "images/yellowbasketball.jpg", desc: "Vibrant yellow pendant that adds confidence to any outfit.", category: "Basketball"},
+    {name: "#73 Red Sturling Silver Basketball Necklace", price: 520, img: "images/redbasketball.jpg", desc: "Classic red pendant with timeless appeal.", category: "Basketball"},
+    {name: "Green Sturling Silver Basketball Necklace", price: 520, img: "images/greenbasketball.jpg", desc: "Fresh green tone symbolizing growth and vitality.", category: "Basketball"},
+    {name: "White Sturling Silver Basketball Necklace", price: 520, img: "images/whitebasketball.jpg", desc: "Elegant white finish for a refined look.", category: "Basketball"},
+    {name: "Sturling Silver LBS Diamond Heart Necklace", price: 650, img: "images/heartnecklace.jpg", desc: "Sparkling diamond heart pendant expressing love.", category: "Necklace"},
+    {name: "Sturling Silver and Copper Bracelet", price: 150, img: "images/brasebracelet.jpg", desc: "Handcrafted copper bracelet with rustic charm.", category: "Bracelet"},
+    {name: "Sturling Silver Copper Bass Broken Heart Bracelet", price: 300, img: "images/bracelet.jpg", desc: "Stylish bracelet featuring a symbolic heart design.", category: "Bracelet"},
+    {name: "Garnet LBS Diamond Silver Bracelet", price: 1100, img: "images/Garnet Diamond Silver Bracelet.jpg", desc: "Luxury bracelet crafted with garnet and silver.", video: "videos/garnet dimond bracelets.mp4", category: "Bracelet"},
+    {name: "Sturling Silver Copper With Ruby Bracelet", price: 225, img: "images/Sturling Silver CopperRuby Bracelet.jpg", desc: "Unique dragon-themed statement bracelet.", category: "Bracelet"},
+    {name: "Sturling Silver Copper And Emerald Stone Bracelet", price: 225, img: "images/Sturling Silver Green Dimond.JPG", desc: "Sturling Silver Green Dimond.", category: "Bracelet"},
+    {name: "Sturling Silver Heart Bracelet /LB dias/Rubys", price: 650, img: "images/Sturling Silver Heart Bracelet LB diasRubys.jpg", desc: "Unique dragon-themed statement bracelet.", category: "Bracelet"},
+    {name: "Sturling Silver And Copper Lionhead Bracelet", price: 650, img: "images/dragoncopperbraclet.jpg", desc: "Unique dragon-themed statement bracelet.", category: "Bracelet"},
+    {name: "Bress Cancer Necklace", price: 125, img: "images/Bress Cancer Necklace.jpg", desc: "Luxury necklace crafted with garnet and silver.", video: "videos/Bress Cancer Necklaces.mp4", category: "Necklace"}
+];
+
+// ==============================
+// CART & SHIPPING
+// ==============================
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+let userTaxRate = 0.08;
+let userShippingRate = 10;
+let shippingType = "standard";
+
+function calculateTotals() {
+    let subtotal = 0;
+    cart.forEach(item => subtotal += item.price);
+    let shipping = cart.length ? userShippingRate : 0;
+    if (shippingType === "express" && cart.length) shipping += 15;
+    let tax = subtotal * userTaxRate;
+    let total = subtotal + shipping + tax;
+    return {subtotal, shipping, tax, total};
+}
+
+function setShipping(type) {
+    shippingType = type;
+    renderCart();
+}
+
+function addToCart(id) {
+    cart.push(products[id]);
+    localStorage.setItem("cart", JSON.stringify(cart));
+    updateCartCount();
+    const popup = document.createElement("div");
+    popup.textContent = "✅ Added to cart successfully!";
+    popup.style.position = "fixed";
+    popup.style.top = "50%";
+    popup.style.left = "50%";
+    popup.style.transform = "translate(-50%, -50%)";
+    popup.style.background = "red";
+    popup.style.color = "white";
+    popup.style.padding = "16px 24px";
+    popup.style.borderRadius = "10px";
+    popup.style.boxShadow = "0 4px 15px rgba(0,0,0,0.3)";
+    popup.style.zIndex = 9999;
+    popup.style.fontSize = "18px";
+    popup.style.textAlign = "center";
+    document.body.appendChild(popup);
+    setTimeout(() => popup.remove(), 2000);
+}
+
+function removeItem(i) {
+    cart.splice(i, 1);
+    localStorage.setItem("cart", JSON.stringify(cart));
+    updateCartCount();
+    renderCart();
+}
+
+function updateCartCount() {
+    document.getElementById("cart-count").textContent = cart.length;
+}
+
+// ==============================
+// RENDER CART
+// ==============================
+function renderCart() {
+    const totals = calculateTotals();
+    let {subtotal, shipping, tax, total} = totals;
+    let html = `<div class="section"><h2>Your Cart</h2>`;
+    if (cart.length === 0) {
+        html += `<p>Your cart is empty.</p><button onclick="renderCategories()">Back to Shop</button></div>`;
+        document.getElementById("app").innerHTML = html;
+        return;
+    }
+
+    cart.forEach((item, i) => {
+        html += `<div class="cart-item">
+            <div style="display:flex;align-items:center;gap:20px;">
+                <img src="${item.img}">
+                <div>
+                    <div style="font-weight:600;">${item.name}</div>
+                    <div style="color:#b89b5e;">$${item.price.toFixed(2)}</div>
+                </div>
+            </div>
+            <button onclick="removeItem(${i})">Remove</button>
+        </div>`;
+    });
+
+    html += `<div style="margin:20px 0;text-align:left;max-width:400px;margin-left:auto;margin-right:auto;">
+        <label style="display:block;margin:10px 0;">
+            <input type="radio" name="shipping" value="standard" ${shippingType === "standard" ? "checked" : ""} onclick="setShipping('standard')">
+            Standard Shipping ($${userShippingRate})
+        </label>
+        <label style="display:block;margin-bottom:10px;">
+            <input type="radio" name="shipping" value="express" ${shippingType === "express" ? "checked" : ""} onclick="setShipping('express')">
+            Express Shipping ($${userShippingRate + 15})
+        </label>
+    </div>`;
+
+    html += `<div class="total">Subtotal: $${subtotal.toFixed(2)}</div>
+    <div class="total">Shipping: $${shipping.toFixed(2)}</div>
+    <div class="total">Tax (${(userTaxRate*100).toFixed(2)}%): $${tax.toFixed(2)}</div>
+    <div class="total" style="font-size:22px;">Total: $${total.toFixed(2)}</div>
+    <button id="checkout-btn">Checkout with PayPal</button></div>`;
+
+    document.getElementById("app").innerHTML = html;
+
+    document.getElementById("checkout-btn").onclick = function() {
+        this.style.display = 'none';
+        let container = document.createElement('div');
+        container.id = 'paypal-button-container';
+        container.style.marginTop = '20px';
+        document.querySelector('.section').appendChild(container);
+        renderPayPal(subtotal, shipping, tax, total);
+    };
+}
+
+// ==============================
+// PAYPAL CHECKOUT
+// ==============================
+function renderPayPal(subtotal, shipping, tax, total) {
+    paypal.Buttons({
+        createOrder: function(data, actions) {
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        currency_code: "USD",
+                        value: total.toFixed(2),
+                        breakdown: {
+                            item_total: {currency_code: "USD", value: subtotal.toFixed(2)},
+                            shipping: {currency_code: "USD", value: shipping.toFixed(2)},
+                            tax_total: {currency_code: "USD", value: tax.toFixed(2)}
+                        }
+                    },
+                    items: cart.map(item => ({
+                        name: item.name,
+                        unit_amount: {currency_code: "USD", value: item.price.toFixed(2)},
+                        quantity: "1"
+                    }))
+                }]
+            });
+        },
+        onApprove: function(data, actions) {
+            return actions.order.capture().then(function(details) {
+                const name = details.payer.name.given_name + " " + details.payer.name.surname;
+                const email = details.payer.email_address;
+                const shippingAddress = details.purchase_units[0].shipping.address;
+                let purchasedProducts = cart.map(item => item.name).join(", ");
+                cart = [];
+                localStorage.setItem("cart", JSON.stringify(cart));
+                updateCartCount();
+
+                document.getElementById("app").innerHTML = `
+                <div class="section">
+                    <h2>🎉 Thank You, ${name}!</h2>
+                    <p>Your order has been placed successfully.</p>
+                    <p><strong>Order ID:</strong> ${data.orderID}</p>
+                    <p><strong>Total Paid:</strong> $${total.toFixed(2)}</p>
+
+                    <h3>Please confirm your shipping info (backup)</h3>
+                    <form action="https://formsubmit.co/rozanshop8@gmail.com" method="POST">
+                        <input type="text" name="name" placeholder="Full Name" value="${name}" required>
+                        <input type="text" name="email" placeholder="Email" value="${email}" required>
+                        <input type="text" name="address" placeholder="Street Address" value="${shippingAddress.address_line_1 || ''}" required>
+                        <input type="text" name="city" placeholder="City" value="${shippingAddress.admin_area_2 || ''}" required>
+                        <select name="state" required>
+                            <option value="">Select State</option>
+                            <option value="AL">Alabama</option>
+                            <option value="AK">Alaska</option>
+                            <option value="AZ">Arizona</option>
+                            <option value="AR">Arkansas</option>
+                            <option value="CA">California</option>
+                            <option value="CO">Colorado</option>
+                            <option value="CT">Connecticut</option>
+                            <option value="DE">Delaware</option>
+                            <option value="FL">Florida</option>
+                            <option value="GA">Georgia</option>
+                            <option value="HI">Hawaii</option>
+                            <option value="ID">Idaho</option>
+                            <option value="IL">Illinois</option>
+                            <option value="IN">Indiana</option>
+                            <option value="IA">Iowa</option>
+                            <option value="KS">Kansas</option>
+                            <option value="KY">Kentucky</option>
+                            <option value="LA">Louisiana</option>
+                            <option value="ME">Maine</option>
+                            <option value="MD">Maryland</option>
+                            <option value="MA">Massachusetts</option>
+                            <option value="MI">Michigan</option>
+                            <option value="MN">Minnesota</option>
+                            <option value="MS">Mississippi</option>
+                            <option value="MO">Missouri</option>
+                            <option value="MT">Montana</option>
+                            <option value="NE">Nebraska</option>
+                            <option value="NV">Nevada</option>
+                            <option value="NH">New Hampshire</option>
+                            <option value="NJ">New Jersey</option>
+                            <option value="NM">New Mexico</option>
+                            <option value="NY">New York</option>
+                            <option value="NC">North Carolina</option>
+                            <option value="ND">North Dakota</option>
+                            <option value="OH">Ohio</option>
+                            <option value="OK">Oklahoma</option>
+                            <option value="OR">Oregon</option>
+                            <option value="PA">Pennsylvania</option>
+                            <option value="RI">Rhode Island</option>
+                            <option value="SC">South Carolina</option>
+                            <option value="SD">South Dakota</option>
+                            <option value="TN">Tennessee</option>
+                            <option value="TX">Texas</option>
+                            <option value="UT">Utah</option>
+                            <option value="VT">Vermont</option>
+                            <option value="VA">Virginia</option>
+                            <option value="WA">Washington</option>
+                            <option value="WV">West Virginia</option>
+                            <option value="WI">Wisconsin</option>
+                            <option value="WY">Wyoming</option>
+                        </select>
+                        <input type="text" name="zip" placeholder="ZIP Code" value="${shippingAddress.postal_code || ''}" required>
+                        <input type="text" name="phone" placeholder="Phone Number" required>
+                        <input type="hidden" name="products" value="${purchasedProducts}">
+                        <input type="hidden" name="orderID" value="${data.orderID}">
+                        <input type="hidden" name="total" value="${total.toFixed(2)}">
+                        <button type="submit">Confirm Order Info</button>
+                    </form>
+
+                    <button onclick="goHome()">Return Home</button>
+                </div>
+                `;
+            });
+        },
+        onCancel: function() {
+            alert("Payment cancelled.");
+        },
+        onError: function(err) {
+            console.error(err);
+            alert("Checkout error.");
+        }
+    }).render('#paypal-button-container');
+}
+
+// ==============================
+// SHOP & CATEGORIES
+// ==============================
+function renderCategories() {
+    const categories = ["Basketball", "Necklace", "Bracelet"];
+    let html = `<div class="section"><h2>Shop</h2><div class="products">`;
+
+    categories.forEach(cat => {
+        let catImage = "";
+        if (cat === "Basketball") catImage = "images/basketball-main.jpg";
+        if (cat === "Necklace") catImage = "images/your-photo-necklaces.jpg";
+        if (cat === "Bracelet") catImage = "images/your-bracelet-image.jpg";
+        html += `<div class="product-card" onclick="renderCategory('${cat}')">
+                    <img src="${catImage}">
+                    <h3>${cat}</h3>
+                 </div>`;
+    });
+
+    html += `</div></div>`;
+    document.getElementById("app").innerHTML = html;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ==============================
+// CATEGORY PAGE
+// ==============================
+function renderCategory(category) {
+    const filtered = products.filter(p => p.category === category);
+    let html = `<div class="section"><h2>${category}</h2><div class="products">`;
+    filtered.forEach((p, i) => {
+        html += `<div class="product-card" onclick="renderProduct(${products.indexOf(p)})">
+                    <img src="${p.img}">
+                    <h3>${p.name}</h3>
+                    <p>$${p.price?.toLocaleString() || 'N/A'}</p>
+                 </div>`;
+    });
+    html += `</div><button onclick="renderCategories()">Back to Categories</button></div>`;
+    document.getElementById("app").innerHTML = html;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ==============================
+// PRODUCT PAGE
+// ==============================
+function renderProduct(id) {
+    const p = products[id];
+    let html = `<div class="section"><div class="product-container">
+                    <img src="${p.img}">
+                    <h2 style="font-family:'Playfair Display',serif;margin:20px 0">${p.name}</h2>
+                    <p>${p.desc}</p>
+                    <p style="color:#b89b5e;font-weight:600;margin:15px 0">$${p.price?.toLocaleString() || 'N/A'}</p>
+                    <button onclick="addToCart(${id})">Add to Cart</button>
+                    <button onclick="renderCategory('${p.category}')">Back to ${p.category}</button>
+                 </div>`;
+
+    if (p.video) {
+        html += `<div style="margin-top:20px;display:flex;justify-content:center;">
+                    <video controls autoplay loop muted style="width:400px;height:300px;object-fit:cover;border-radius:10px;">
+                        <source src="${p.video}" type="video/mp4">
+                    </video>
+                 </div>`;
+    }
+    html += `</div>`;
+    document.getElementById("app").innerHTML = html;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ==============================
+// HOME & CONTACT
+// ==============================
+function goHome() {
+    document.getElementById("app").innerHTML = `<section class="hero">
+        <video autoplay muted loop playsinline>
+            <source src="videos/hero-video.mp4" type="video/mp4">
+        </video>
+        <div class="hero-content">
+            <h1>Elegance in Every Detail</h1>
+            <button onclick="renderCategories()">Shop Now</button>
+        </div>
+    </section>`;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goContact() {
+    document.getElementById("app").innerHTML = `<div class="section"><h2>Contact Us</h2>
+    <div style="display:flex;justify-content:center;gap:20px;flex-wrap:wrap;margin-bottom:20px;">
+        <a href="mailto:Rozanshop8@gmail.com"><button>Email Us</button></a>
+        <a href="https://www.instagram.com/rozan.sh0p" target="_blank"><button>Follow us on Instagram</button></a>
+    </div>
+    <p style="max-width:800px;margin:20px auto;line-height:1.8;">
+        With over 40 years of expertise in jewelry craftsmanship and fine detailed finishings. Our vision in jewelry is to blend traditional artistry with technology to create classic designs and memories that will last for generations. From small beginnings in the heart of New York City.<br><br>We would like to present Rozan to the world! Each handcrafted limited collection will spark the world and you in a way only one can imagine.
+    </p></div>`;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ==============================
+// INITIALIZE
+// ==============================
+updateCartCount();
+goHome();
+
+</script>
+
+</body>
+</html>
