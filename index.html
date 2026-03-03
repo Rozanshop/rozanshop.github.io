@@ -106,11 +106,11 @@ const products = [
     {name: "Green Sturling Silver Basketball Necklace", price: 520, img: "images/greenbasketball.jpg", desc: "Fresh green tone symbolizing growth and vitality.", category: "Basketball"},
     {name: "White Sturling Silver Basketball Necklace", price: 520, img: "images/whitebasketball.jpg", desc: "Elegant white finish for a refined look.", category: "Basketball"},
     {name: "Sturling Silver LBS Diamond Heart Necklace", price: 650, img: "images/heartnecklace.jpg", desc: "Sparkling diamond heart pendant expressing love.", category: "Necklace"},
-    {name: "Sturling Silver and Copper Bracelet", price: 150, img: "images/brasebracelet.jpg", desc: "Handcrafted copper bracelet with rustic charm.", category: "Bracelet"},
-    {name: "Sturling Silver Copper Bass Broken Heart Bracelet", price: 300, img: "images/bracelet.jpg", desc: "Stylish bracelet featuring a symbolic heart design.", category: "Bracelet"},
+    {name: "Sturling Silver and Copper Bracelet", price: 150, img: "images/brasebracelet.jpg", desc: "Handcrafted copper bracelet with rustic charm.", video: "videos/brassbracelet.mp4", category: "Bracelet"},
+    {name: "Sturling Silver Copper Bass Broken Heart Bracelet", price: 300, img: "images/bracelet.jpg", desc: "Stylish bracelet featuring a symbolic heart design.", video: "videos/brokenheartbraclet.MP4", category: "Bracelet"},
     {name: "Garnet LBS Diamond Silver Bracelet", price: 1100, img: "images/Garnet Diamond Silver Bracelet.jpg", desc: "Luxury bracelet crafted with garnet and silver.", video: "videos/garnet dimond bracelets.mp4", category: "Bracelet"},
     {name: "Sturling Silver Copper With Ruby Bracelet", price: 225, img: "images/Sturling Silver CopperRuby Bracelet.jpg", desc: "Unique dragon-themed statement bracelet.", category: "Bracelet"},
-    {name: "Sturling Silver Copper And Emerald Stone Bracelet", price: 225, img: "images/Sturling Silver Green Dimond.jpg", desc: "Sturling Silver Green Dimond.", category: "Bracelet"},
+    {name: "Sturling Silver Copper And Emerald Stone Bracelet", price: 225, img: "images/Sturling Silver Green Dimond.JPG", desc: "Sturling Silver Green Dimond.", category: "Bracelet"},
     {name: "Sturling Silver Heart Bracelet /LB dias/Rubys", price: 650, img: "images/Sturling Silver Heart Bracelet LB diasRubys.jpg", desc: "Unique dragon-themed statement bracelet.", category: "Bracelet"},
     {name: "Sturling Silver And Copper Lionhead Bracelet", price: 650, img: "images/dragoncopperbraclet.jpg", desc: "Unique dragon-themed statement bracelet.", category: "Bracelet"},
     {name: "Bress Cancer Necklace", price: 125, img: "images/Bress Cancer Necklace.jpg", desc: "Luxury necklace crafted with garnet and silver.", video: "videos/Bress Cancer Necklaces.mp4", category: "Necklace"}
@@ -197,17 +197,6 @@ function renderCart() {
             <button onclick="removeItem(${i})">Remove</button>
         </div>`;
     });
-
-    html += `<div style="margin:20px 0;text-align:left;max-width:400px;margin-left:auto;margin-right:auto;">
-        <label style="display:block;margin:10px 0;">
-            <input type="radio" name="shipping" value="standard" ${shippingType === "standard" ? "checked" : ""} onclick="setShipping('standard')">
-            Standard Shipping ($${userShippingRate})
-        </label>
-        <label style="display:block;margin-bottom:10px;">
-            <input type="radio" name="shipping" value="express" ${shippingType === "express" ? "checked" : ""} onclick="setShipping('express')">
-            Express Shipping ($${userShippingRate + 15})
-        </label>
-    </div>`;
 
     html += `<div class="total">Subtotal: $${subtotal.toFixed(2)}</div>
     <div class="total">Shipping: $${shipping.toFixed(2)}</div>
@@ -456,4 +445,3 @@ goHome();
 
 </body>
 </html>
-
